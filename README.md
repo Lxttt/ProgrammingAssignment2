@@ -43,6 +43,19 @@ really a list containing a function to
                  getmean = getmean)
     }
 
+ makeVector <- function(x = matrix()) {
+            inv <- NULL
+            set <- function(y) {
+                    x <<- y
+                    m <<- NULL
+            }
+            get <- function() x
+            setmean <- function(mean) m <<- mean
+            getmean <- function() m
+            list(set = set, get = get,
+                 setmean = setmean,
+                 getmean = getmean)
+    }
 The following function calculates the mean of the special "vector"
 created with the above function. However, it first checks to see if the
 mean has already been calculated. If so, it `get`s the mean from the
@@ -74,10 +87,38 @@ Write the following functions:
 
 1.  `makeCacheMatrix`: This function creates a special "matrix" object
     that can cache its inverse.
+    
+    makeCacheMatrix  <- function(x = matrix()) {
+            inv <- NULL
+            set <- function(y) {
+                    x <<- y
+                    m <<- NULL
+            }
+            get <- function() x
+            set_inverse <- function(inverse) inv <<- inverse
+            get_inverse <- function() inv
+            list(set = set, get = get,
+                 set_inverse = set_inverse,
+                 get_inverse = get_inverse)
+    }
+    
 2.  `cacheSolve`: This function computes the inverse of the special
     "matrix" returned by `makeCacheMatrix` above. If the inverse has
     already been calculated (and the matrix has not changed), then
     `cacheSolve` should retrieve the inverse from the cache.
+
+  cacheSolve <- function(x, ...) {
+            inv <- x$get_inverse()
+            if(!is.null(inv)) {
+                    message("getting cached data")
+                    return(inv)
+            }
+            matrix <- x$get()
+            inv <- cacheSolve(matrix, ...)
+            x$set_inverse(inv)
+            inv
+    }
+
 
 Computing the inverse of a square matrix can be done with the `solve`
 function in R. For example, if `X` is a square invertible matrix, then
